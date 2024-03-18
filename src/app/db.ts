@@ -1,17 +1,9 @@
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
-import { drizzle as drizzleNeonHttp } from "drizzle-orm/neon-http";
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-// -- Neon http connection
-const sql = neon(process.env.DATABASE_URL!, {
-  fetchOptions: {
-    cache: "no-store",
-    revalidate: 0,
-    tags: ["neon", "db"],
-  },
-}) as NeonQueryFunction<boolean, boolean>;
-
-export const db = drizzleNeonHttp(sql);
+const queryClient = postgres("postgres://postgres:adminadmin@0.0.0.0:5432/db");
+export const db = drizzle(queryClient);
 
 export const sessions = pgTable("sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
